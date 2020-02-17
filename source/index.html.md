@@ -37,6 +37,13 @@ The repository that builds these docs is open-source at [https://github.com/canv
 
 This version of the docs was built from [commit <%= commit false %>](https://github.com/canvascbl/api-docs/commit/<%= commit true %>).
 
+## Developer Forum
+
+If you **currently hold a CanvasCBL Developer Key**, you'll have access to the CanvasCBL Developer Forum. It's a place where
+anyone with a CanvasCBL Developer Key can ask questions, hear about API changes early, and more.
+
+Members can access the forum at [https://go.canvascbl.com/devforum](https://go.canvascbl.com/devforum).
+
 ## Base URL
 
 > Our base URL (a 404!)
