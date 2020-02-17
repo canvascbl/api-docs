@@ -23,7 +23,7 @@ Install [Docker Desktop](https://www.docker.com/products/docker-desktop), then
 follow the steps below. If you're on a mac with Homebrew, just use
 `brew cask install docker`.
 
-
+1. Clone this repo `git clone https://github.com/canvascbl/api-docs.git` (then enter it with `cd api-docs`)
 2. Run `make build/docker`
 3. Run `make run/docker`.
    1. Your container is dynamically attached to the source folder.
@@ -33,7 +33,7 @@ You can change anything in there, and it will be updated in your docs.
 
 ### Locally, with ruby
 
-1. Clone this repo `git clone https://github.com/canvascbl/api-docs.git`
+1. Clone this repo `git clone https://github.com/canvascbl/api-docs.git` (then enter it with `cd api-docs`)
 2. Install Ruby 2.6
 3. `gem install bundler`
 4. `make install`
