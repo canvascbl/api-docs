@@ -546,13 +546,13 @@ However, if you ask for `detailed_grades`, you will not get *simple grades*. It'
 
 While the `include[]` parameter is intended to mirror [OAuth2 Scopes](#scopes), they may differ in the future, so the following table is here for convience.
 
-| Includes Name | Required Scope |
-| ------------- | -------------- |
-| `detailed_grades` | `detailed_grades` |
-| `user_profile` | `user_profile` |
-| `outcome_results` | `outcome_results` |
-| `observees` | `observees` |
-| `courses` | `courses` |
+| Includes Name | Required Scope | Note |
+| ------------- | -------------- | ---- |
+| `detailed_grades` | `detailed_grades` |  |
+| `user_profile` | `user_profile` |  |
+| `outcome_results` | `outcome_results` | Outcome results are [auto-paginated](#auto-pagination). |
+| `observees` | `observees` |  |
+| `courses` | `courses` |  |
 
 ### Description
 
@@ -703,11 +703,19 @@ Get all assignments for a course.
 
 - `assignments`
 
+### Query String
+
+| Param | Example Value | Description |
+| ----- | ------------- | ----------- |
+| `assignment_ids[]` | `1` | Optional. Lets you specify the assignment IDs you want returned. Include as many as you'd like. Note that this endpoint will error out if you ask for one or more assignments that don't exist or you don't have access to. |
+
 ### Description
 
 This endpoint lets you get all assignments for a course.
 
 Mostly a mirror of [this](https://canvas.instructure.com/doc/api/assignments.html#method.assignments_api.index) Canvas endpoint.
+
+This endpoint is [auto-paginated](#auto-pagination).
 
 ## Get Outcome Alignments
 
