@@ -4,7 +4,8 @@
 
 ```json
 {
-  "error": "example error message"
+  "error": "example error message",
+  "status_code": 123
 }
 ```
 
@@ -16,13 +17,16 @@ This section discusses Error Handling in the CanvasCBL API.
 
 All errors are in JSON. See the example on the right.
 
+The `status_code` field is populated with the HTTP Status Code returned.
+
 ## Session Error
 
 > Session error text
 
 ```json
 {
-  "error": "no session string (pass it in via the session_string cookie)"
+  "error": "no session string (pass it in via the session_string cookie)",
+  "status_code": 401
 }
 ```
 
@@ -34,7 +38,8 @@ This means that **you have not passed in an Access Token** via the Authorization
 
 ```json
 {
-  "error": "<invalid/missing> <param name> as <param type, like url or query> param"
+  "error": "<invalid/missing> <param name> as <param type, like url or query> param",
+  "status_code": 400
 }
 ```
 
@@ -42,7 +47,8 @@ This means that **you have not passed in an Access Token** via the Authorization
 
 ```json
 {
-  "error": "invalid outcomeID as query param"
+  "error": "invalid outcomeID as query param",
+  "status_code": 400
 }
 ```
 
@@ -86,7 +92,7 @@ Currently, all possible grades errors are to the right.
 
 ```go
 const (
-    gradesErrorNoTokens              = "no stored tokens for this user"
+	gradesErrorNoTokens              = "no stored tokens for this user"
 	gradesErrorRevokedToken          = "the token/refresh token has been revoked or no longer works"
 	gradesErrorRefreshedTokenError   = "after refreshing the token, it is invalid"
 	gradesErrorUnknownCanvasError    = "there was an unknown error from canvas"
