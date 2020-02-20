@@ -1248,5 +1248,11 @@
         }
       }
     }
+  },
+  "gpa": {
+    "unweighted": {
+      "subgrades": 3.70,
+      "default": 4.00
+    }
   }
 }

@@ -1042,5 +1042,11 @@
       "3": "A",
       "4": "B"
     }
+  },
+  "gpa": {
+    "unweighted": {
+      "subgrades": 3.70,
+      "default": 4.00
+    }
   }
 }

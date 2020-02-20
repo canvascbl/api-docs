@@ -121,6 +121,7 @@ The following OAuth2 scopes are available, although your credentials may not hav
 | average_outcome_score | The average score for any outcome in any course the user is enrolled in. |
 | outcome_results | Specific scores on assignments. |
 | detailed_grades | Grades, along with each outcome score and whether the last alignment was dropped. |
+| gpa | The user's unweighted GPA. |
 
 ## Request
 
@@ -473,7 +474,8 @@ curl \
 include[]=user_profile\
 &include[]=outcome_results\
 &include[]=observees\
-&include[]=courses"
+&include[]=courses\
+&include[]=gpa"
 ```
 
 ```javascript
@@ -485,7 +487,8 @@ const kitchenSinkRequest = await axios({
       'user_profile',
       'outcome_results',
       'observees',
-      'courses'
+      'courses',
+      'gpa'
     ]
   }
   headers: {
@@ -507,7 +510,8 @@ include[]=user_profile\
 &include[]=outcome_results\
 &include[]=observees\
 &include[]=courses\
-&include[]=detailed_grades"
+&include[]=detailed_grades\
+&include[]=gpa"
 ```
 
 ```javascript
@@ -520,7 +524,8 @@ const kitchenSinkRequest = await axios({
       'outcome_results',
       'observees',
       'courses',
-      'detailed_grades'
+      'detailed_grades',
+      'gpa'
     ]
   }
   headers: {
@@ -553,6 +558,7 @@ While the `include[]` parameter is intended to mirror [OAuth2 Scopes](#scopes), 
 | `outcome_results` | `outcome_results` | Outcome results are [auto-paginated](#auto-pagination). |
 | `observees` | `observees` |  |
 | `courses` | `courses` |  |
+| `gpa` | `gpa` | Please see the [GPA section](#gpa). |
 
 ### Description
 
@@ -585,6 +591,40 @@ Here's a reference to those:
 | `outcome_results` | [`GET /api/v1/courses/:course_id/outcome_results`](https://canvas.instructure.com/doc/api/outcome_results.html#method.outcome_results.index) |
 | `observees` | [`GET /api/v1/users/:user_id/observees`](https://canvas.instructure.com/doc/api/user_observees.html#method.user_observees.index) |
 | `courses` | [`GET /api/v1/courses`](https://canvas.instructure.com/doc/api/courses.html#method.courses.index) |
+
+### GPA
+
+> The GPA response (as a part of the [grades request](#grades))
+
+```json
+{
+  // ...
+  "gpa": {
+    // user id
+    "1": {
+      "unweighted": {
+      "subgrades": 3.70,
+      "default": 4.00
+    }
+  }
+  // ...
+}
+```
+
+GPA at d.tech is calculated differently than it is at many schools.
+The notable change is that, in an unweighted GPA, d.tech does not count what we're calling "subgrades"-- `+` or `-` versions of grades--,
+like an A- or B+. d.tech counts all subgrades as their base grade, so a B-, B and B+ all earn a 3.0, for example.
+
+However, we understand that students may want to see their GPA with so-called "subgrades", so we include this feature.
+
+In the example (it's the last one, scroll down!) our student has all A-'s. Normally, an A- would equate to a 3.7. 
+This value is reflected in `gpa[user_id].unweighted.subgrades`.
+But, since d.tech does not count the subgrade, this A- is "turned into" an A, giving them a 4.0. This GPA is
+reflected in `gpa[user_id].unweighted.default`.
+
+We have a helpdesk-style article about this [here](https://go.canvascbl.com/help/gpas).
+
+Currently, we do not offer a weighted GPA. However, the object structure is set up so that we could introduce it without breaking changes.
 
 # Courses
 
