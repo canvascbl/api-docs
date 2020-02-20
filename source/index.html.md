@@ -581,7 +581,7 @@ Here's a reference to those:
 
 | Includes Name | Canvas API Doc |
 | ------------- | -------------- |
-| `user_info` | [`GET /api/v1/users/:user_id/profile`](https://canvas.instructure.com/doc/api/users.html#method.profile.settings) |
+| `user_profile` | [`GET /api/v1/users/:user_id/profile`](https://canvas.instructure.com/doc/api/users.html#method.profile.settings) |
 | `outcome_results` | [`GET /api/v1/courses/:course_id/outcome_results`](https://canvas.instructure.com/doc/api/outcome_results.html#method.outcome_results.index) |
 | `observees` | [`GET /api/v1/users/:user_id/observees`](https://canvas.instructure.com/doc/api/user_observees.html#method.user_observees.index) |
 | `courses` | [`GET /api/v1/courses`](https://canvas.instructure.com/doc/api/courses.html#method.courses.index) |
