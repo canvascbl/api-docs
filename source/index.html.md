@@ -12,6 +12,7 @@ toc_footers:
   - <a href='https://canvascbl.com/'>CanvasCBL</a>
 
 includes:
+  - notifications
   - errors
   - glossary
 
@@ -88,6 +89,18 @@ You can learn more about CORS [here](https://developer.mozilla.org/en-US/docs/We
 The CanvasCBL API does not support CORS. For you, this means that, if you want to use the CanvasCBL API and display the result on a webpage,
 you must proxy the request and reponse through a server you control. Check out our [API Demo](https://go.canvascbl.com/api-demo-node) for
 a demo of this.
+
+## Rate Limiting
+
+The CanvasCBL API has a per-IP rate limit that should be way, way more than enough for nearly every purpose.
+
+However, if **all** of the following conditions apply to you:
+
+- You hold a CanvasCBL Developer Key 
+- You currently experience issues with rate limiting
+- You have a real need for a higher rate limit
+
+Please let us know via the [Developer Forum](#developer-forum).
 
 # Authentication
 
@@ -642,7 +655,7 @@ curl \
 ```
 
 ```javascript
-const kitchenSinkRequest = await axios({
+const assignmentsRequest = await axios({
   method: "GET",
   url: "<%= api_base_url %>/api/v1/courses/1/assignments",
   headers: {
@@ -770,7 +783,7 @@ student_id=1"
 ```
 
 ```javascript
-const kitchenSinkRequest = await axios({
+const outcomeAlignmentsRequest = await axios({
   method: "GET",
   url: "<%= api_base_url %>/api/v1/courses/1/outcome_alignments",
   params: {
@@ -835,7 +848,7 @@ curl \
 ```
 
 ```javascript
-const kitchenSinkRequest = await axios({
+const outcomeRequest = await axios({
   method: "GET",
   url: "<%= api_base_url %>/api/v1/outcomes/1",
   headers: {
