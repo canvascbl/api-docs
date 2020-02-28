@@ -52,13 +52,13 @@ Members can access the forum at [https://go.canvascbl.com/devforum](https://go.c
 ```shell
 curl <%= api_base_url %>/
 
-# 404 page not found
+# 404 page not found - go.canvascbl.com/docs
 ```
 
 ```javascript
 const baseUrlRequest = await axios('<%= api_base_url %>/')
 
-// 404 page not found
+// 404 page not found - go.canvascbl.com/docs
 ```
 
 Our base URL is `<%= api_base_url %>/`. That's the starting point for all requests. Note that HTTP requests will be forwarded to HTTPS, but you've already sent the access token in plain text over the internet. Please use HTTPS!
