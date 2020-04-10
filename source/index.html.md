@@ -598,12 +598,12 @@ Not all fields will be there, notably large ones like descriptions. You can see 
 
 Here's a reference to those:
 
-| Includes Name | Canvas API Doc |
-| ------------- | -------------- |
-| `user_profile` | [`GET /api/v1/users/:user_id/profile`](https://canvas.instructure.com/doc/api/users.html#method.profile.settings) |
-| `outcome_results` | [`GET /api/v1/courses/:course_id/outcome_results`](https://canvas.instructure.com/doc/api/outcome_results.html#method.outcome_results.index) |
-| `observees` | [`GET /api/v1/users/:user_id/observees`](https://canvas.instructure.com/doc/api/user_observees.html#method.user_observees.index) |
-| `courses` | [`GET /api/v1/courses`](https://canvas.instructure.com/doc/api/courses.html#method.courses.index) |
+| Includes Name | Canvas API Doc | Note |
+| ------------- | -------------- | ---- |
+| `user_profile` | [`GET /api/v1/users/:user_id/profile`](https://canvas.instructure.com/doc/api/users.html#method.profile.settings) | |
+| `outcome_results` | [`GET /api/v1/courses/:course_id/outcome_results`](https://canvas.instructure.com/doc/api/outcome_results.html#method.outcome_results.index) | |
+| `observees` | [`GET /api/v1/users/:user_id/observees`](https://canvas.instructure.com/doc/api/user_observees.html#method.user_observees.index) | |
+| `courses` | [`GET /api/v1/courses`](https://canvas.instructure.com/doc/api/courses.html#method.courses.index) | Courses will have a `canvascbl_hidden` property. See [course hiding](#hide-a-course) for more info. |
 
 ### GPA
 
@@ -831,6 +831,98 @@ Gets Outcome Alignments for a course.
 This endpoint gets outcome alignments for a course on Canvas.
 
 Mostly a mirror of [this](https://canvas.instructure.com/doc/api/outcomes.html#method.outcomes_api.outcome_alignments) Canvas endpoint.
+
+## Hide a Course
+
+> Hide course ID 1
+
+```shell
+curl \
+  -X PUT \
+  -H "Authorization: ilovecanvascbl" \
+  "<%= api_base_url %>/api/v1/courses/1/hide"
+```
+
+```javascript
+const hideCourseRequest = await axios({
+  method: "PUT",
+  url: "<%= api_base_url %>/api/v1/courses/1/hide",
+  headers: {
+    "Authorization": "Bearer ilovecanvascbl"
+  }
+});
+```
+
+> Response: Course ID 1 is marked as hidden
+
+```json
+{
+  "canvascbl_hidden": true
+}
+```
+
+### Endpoint
+
+`PUT /api/v1/courses/:courseID/hide`
+
+### Scopes
+
+- `courses`
+
+### Description
+
+This endpoint enables hiding a course. When a course is hidden,
+the `canvascbl_hidden` course attribute will be set to `true`. **The API will
+not remove that course from responses.**
+
+You may make this request as many times as you like, and the result will be
+the same.
+
+## Show a Course
+
+> Show course ID 1
+
+```shell
+curl \
+  -X PUT \
+  -H "Authorization: ilovecanvascbl" \
+  "<%= api_base_url %>/api/v1/courses/1/hide"
+```
+
+```javascript
+const showCourseRequest = await axios({
+  method: "DELETE",
+  url: "<%= api_base_url %>/api/v1/courses/1/hide",
+  headers: {
+    "Authorization": "Bearer ilovecanvascbl"
+  }
+});
+```
+
+> Response: Course ID 1 is NOT marked as hidden
+
+```json
+{
+  "canvascbl_hidden": false
+}
+```
+
+### Endpoint
+
+`DELETE /api/v1/courses/:courseID/hide`
+
+### Scopes
+
+- `courses`
+
+### Description
+
+This endpoint disables hiding a course. When a course is hidden,
+the `canvascbl_hidden` course attribute will be set to `true`. **The API will
+not remove that course from responses.**
+
+You may make this request as many times as you like, and the result will be
+the same.
 
 # Outcomes
 

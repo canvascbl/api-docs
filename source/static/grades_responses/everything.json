@@ -110,7 +110,8 @@
       "storage_quota_mb": 500,
       "time_zone": "America/Los_Angeles",
       "uuid": "thisisnormallyunique",
-      "workflow_state": "available"
+      "workflow_state": "available",
+      "canvascbl_hidden": false
     },
     {
       "account_id": 41,
@@ -162,7 +163,8 @@
       "storage_quota_mb": 500,
       "time_zone": "America/Los_Angeles",
       "uuid": "thisisnormallyunique",
-      "workflow_state": "available"
+      "workflow_state": "available",
+      "canvascbl_hidden": false
     },
     {
       "account_id": 41,
@@ -214,7 +216,8 @@
       "storage_quota_mb": 500,
       "time_zone": "America/Los_Angeles",
       "uuid": "thisisnormallyunique",
-      "workflow_state": "available"
+      "workflow_state": "available",
+      "canvascbl_hidden": false
     },
     {
       "account_id": 41,
@@ -275,7 +278,8 @@
       "storage_quota_mb": 500,
       "time_zone": "America/Los_Angeles",
       "uuid": "thisisnormallyunique",
-      "workflow_state": "available"
+      "workflow_state": "available",
+      "canvascbl_hidden": false
     },
     {
       "account_id": 41,
@@ -318,7 +322,8 @@
       "storage_quota_mb": 500,
       "time_zone": "America/Los_Angeles",
       "uuid": "thisisnormallyunique",
-      "workflow_state": "available"
+      "workflow_state": "available",
+      "canvascbl_hidden": false
     },
     {
       "account_id": 41,
@@ -379,7 +384,8 @@
       "storage_quota_mb": 500,
       "time_zone": "America/Los_Angeles",
       "uuid": "thisisnormallyunique",
-      "workflow_state": "available"
+      "workflow_state": "available",
+      "canvascbl_hidden": false
     }
   ],
   "outcome_results": {
