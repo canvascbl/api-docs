@@ -567,6 +567,7 @@ While the `include[]` parameter is intended to mirror [OAuth2 Scopes](#scopes), 
 | Includes Name | Required Scope | Note |
 | ------------- | -------------- | ---- |
 | `detailed_grades` | `detailed_grades` |  |
+| `distance_learning` | `grades` | Please see the [Distance Learning section](#distance-learning). |
 | `user_profile` | `user_profile` |  |
 | `outcome_results` | `outcome_results` | Outcome results are [auto-paginated](#auto-pagination). |
 | `observees` | `observees` |  |
@@ -630,7 +631,7 @@ like an A- or B+. d.tech counts all subgrades as their base grade, so a B-, B an
 
 However, we understand that students may want to see their GPA with so-called "subgrades", so we include this feature.
 
-In the example (it's the last one, scroll down!) our student has all A-'s. Normally, an A- would equate to a 3.7. 
+In the example (it's the towards the bottom, scroll down!) our student has all A-'s. Normally, an A- would equate to a 3.7. 
 This value is reflected in `gpa[user_id].unweighted.subgrades`.
 But, since d.tech does not count the subgrade, this A- is "turned into" an A, giving them a 4.0. This GPA is
 reflected in `gpa[user_id].unweighted.default`.
@@ -638,6 +639,53 @@ reflected in `gpa[user_id].unweighted.default`.
 We have a helpdesk-style article about this [here](https://go.canvascbl.com/help/gpas).
 
 Currently, we do not offer a weighted GPA. However, the object structure is set up so that we could introduce it without breaking changes.
+
+### Distance Learning
+
+For the second semester of the 2019-2020 school year, d.tech will be combining
+the grades from _two canvas courses_ to determine a final _pass or incomplete
+score_ for the class.
+
+Basically, if the student **did not** have an incomplete before distance
+learning, they need to earn a non-incomplete distance learning score.
+If the student had an incomplete before distance learning, they must
+earn a B or better in distance learning to pass.
+
+Calculating this means that the CanvasCBL API must synthesize two Canvas
+courses to compute a final, human-readable score.
+
+To return these new grades, we're adding a new `include` to the grades
+endpoint. It's called `distance_learning`, and it's part of the `grades` scope.
+
+In turn, it adds a new property to the grades response, aptly also
+`distance_learning`. Check out a response on the right.
+
+> Response from /api/v1/grades with `include[]=distance_learning`
+
+```json
+{
+  // grades, courses, etc...
+  "distance_learning": {
+    // user ID
+    "1": {
+      "Biology": {
+        "grade": {
+          "grade": "P",
+          // use rank to compare grades. higher is better.
+          "rank": 1
+        },
+        // the Canvas ID of the in-person course
+        "original_course_id": 1,
+        // the Canvas ID of the distance learning course
+        "distance_learning_course_id": 2
+      }
+      // ... (more courses)
+    }
+    // ... (more users)
+  }
+  // ...
+}
+```
 
 # Courses
 
