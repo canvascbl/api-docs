@@ -592,6 +592,10 @@ CanvasCBL Developer Key Agreement and will cause a revocation of your developer 
 If you're curious what the full response is from this endpoint (with all includes and scopes),
 you can click [here for everything (simple grades)](static/grades_responses/everything_simple_grades.json) and [here for everything (detailed grades)](static/grades_responses/everything.json).
 
+<aside class="notice">
+  Please note that this endpoint will only return grades for courses that the user has a StudentEnrollment in.
+</aside>
+
 ### Canvas API Bindings
 
 Some of the `include[]` options return responses that **essentially** mirror Canvas's API.
@@ -689,7 +693,144 @@ In turn, it adds a new property to the grades response, aptly also
 
 # Courses
 
-These APIs allow you to get auxiliary information about courses. Note that we do not have an API to get a course itself-- do this via [Get Grades](#get-grades), with the `courses` include.
+These APIs allow you to get courses and auxiliary information about them.
+
+## Get Courses
+
+> Get the calling user's courses and distance learning pairs
+
+```shell
+curl \
+  -X GET \
+  -H "Authorization: ilovecanvascbl" \
+  "<%= api_base_url %>/api/v1/courses\
+?include[]=distance_learning_pairs"
+```
+
+```javascript
+const coursesRequest = await axios({
+  method: "GET",
+  url: "<%= api_base_url %>/api/v1/courses",
+  headers: {
+    "Authorization": "Bearer ilovecanvascbl"
+  },
+  params: {
+    include: [
+      'distance_learning_pairs'
+    ]
+  }
+});
+```
+
+> Courses for the calling user and distance learning pairs
+
+```json
+{
+  "courses": [
+    {
+      "account_id": 41,
+      "apply_assignment_group_weights": false,
+      "blueprint": false,
+      "calendar": {
+        "ics": "https://canvas.instructure.com/feeds/calendars/course_tp7ihFuDOa2co5Kjl6ncT4jzxS1GfcP6G3jpHxzt.ics"
+      },
+      "course_code": "Biology - S2 - Martinez",
+      "created_at": "2020-01-15T01:20:47Z",
+      "default_view": "modules",
+      "end_at": "",
+      "enrollment_term_id": 11,
+      "enrollments": [
+        {
+          "associated_user_id": 3,
+          "enrollment_state": "active",
+          "limit_privileges_to_course_section": false,
+          "role": "ObserverEnrollment",
+          "role_id": 7,
+          "type": "observer",
+          "user_id": 1
+        },
+        {
+          "associated_user_id": 2,
+          "enrollment_state": "active",
+          "limit_privileges_to_course_section": false,
+          "role": "ObserverEnrollment",
+          "role_id": 7,
+          "type": "observer",
+          "user_id": 1
+        },
+        {
+          "associated_user_id": 4,
+          "enrollment_state": "active",
+          "limit_privileges_to_course_section": false,
+          "role": "ObserverEnrollment",
+          "role_id": 7,
+          "type": "observer",
+          "user_id": 1
+        }
+      ],
+      "grade_passback_setting": null,
+      "grading_standard_id": 0,
+      "hide_final_grades": true,
+      "id": 1,
+      "is_public": false,
+      "is_public_to_auth_users": false,
+      "license": "private",
+      "locale": "",
+      "name": "Biology - S2 - Martinez",
+      "overridden_course_visibility": "",
+      "public_syllabus": false,
+      "public_syllabus_to_auth": false,
+      "restrict_enrollments_to_course_dates": false,
+      "root_account_id": 1,
+      "start_at": "2020-01-21T17:26:00Z",
+      "storage_quota_mb": 500,
+      "time_zone": "America/Los_Angeles",
+      "uuid": "thisisnormallyunique",
+      "workflow_state": "available",
+      "canvascbl_hidden": false
+    }
+    // ...
+  ],
+  // only included with ?include[]=distance_learning_pairs
+  "distance_learning_pairs": [
+    {
+      "course_name": "Biology",
+      "original_course_id": 1,
+      "distance_learning_course_id": 2
+    }
+    // ...
+  ]
+}
+```
+
+Get all courses for a user.
+
+### Endpoint
+
+`GET /api/v1/courses`
+
+### Scopes
+
+- `courses`
+
+### Query String
+
+| Param | Example Value | Description |
+| ----- | ------------- | ----------- |
+| `include[]` | `distance_learning_pairs` | Optional. Returns pairs of distance learning courses. |
+
+### Description
+
+This endpoint lets you get all assignments for a course.
+
+Mostly a mirror of [this](https://canvas.instructure.com/doc/api/courses.html#method.courses.index) Canvas endpoint,
+but we append the following query params:
+
+- `enrollment_state=active`
+- `include[]=observed_users` (you don't need the observees scope for this)
+
+This endpoint is [auto-paginated](#auto-pagination).
+
 
 ## Get Assignments
 
