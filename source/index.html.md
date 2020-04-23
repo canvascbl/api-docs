@@ -12,6 +12,7 @@ toc_footers:
   - <a href='https://canvascbl.com/'>CanvasCBL</a>
 
 includes:
+  - users
   - notifications
   - errors
   - glossary
@@ -135,6 +136,8 @@ The following OAuth2 scopes are available, although your credentials may not hav
 | outcome_results | Specific scores on assignments. |
 | detailed_grades | Grades, along with each outcome score and whether the last alignment was dropped. |
 | gpa | The user's unweighted GPA. |
+| notifications | The ability to see and change all of the user's notification settings. |
+| enrollments | Enrollments in a user's courses. |
 
 ## Request
 
@@ -691,6 +694,84 @@ In turn, it adds a new property to the grades response, aptly also
 }
 ```
 
+## Get Distance Learning Grades Overview
+
+> Get a summary of distance learning grades for the specified courses
+
+```shell
+curl \
+  -X GET \
+  -H "Authorization: ilovecanvascbl" \
+  "<%= api_base_url %>/api/v1/grades/distance_learning/overview\
+?original_course_id=123\
+&distance_learning_course_id=456"
+```
+
+```javascript
+const distanceLearningGradesOverviewRequest = await axios({
+  method: "GET",
+  url: "<%= api_base_url %>/api/v1/grades/distance_learning/overview",
+  headers: {
+    "Authorization": "Bearer ilovecanvascbl"
+  },
+  params: {
+    original_course_id: 123,
+    distance_learning_course_id: 456
+  }
+});
+```
+
+> Distance learning grades overview
+
+```json
+{
+  "distance_learning_grades_overview": [
+    {
+      "user_id": 1,
+      "grade": {
+        "grade": "P"
+      },
+      // what time CanvasCBL computed the grade
+      "timestamp": "2020-02-01T21:35:03Z"
+    }
+    // ...
+  ]
+}
+```
+
+Get a summary of distance learning grades for a pair of distance learning
+courses.
+
+### Endpoint
+
+`GET /api/v1/grades/distance_learning/overview`
+
+### Scopes
+
+- `grades`
+
+### Query String
+
+| Param | Example Value | Description |
+| ----- | ------------- | ----------- |
+| `distance_learning_course_id` | `123` | **Required.** The ID of the distance learning course. Get this from the [Get Courses](#get-courses) endpoint with `?include[]=distance_learning_pairs`. |
+| `original_course_id` | `456` | **Required.** The ID of the original (in-person) course. Get this from the [Get Courses](#get-courses) endpoint with `?include[]=distance_learning_pairs`. |
+
+### Description
+
+This endpoint lets you get a summary of distance learning grades for all
+students in the specified courses.
+
+In order to load this endpoint, the calling user must have a
+TeacherEnrollment in both courses.
+
+This endpoint returns cached grades. That means they're updated about hourly.
+
+When a user first signs up, it can take up to 3 hours for grades to be
+available from this endpoint, as grades and enrollments must sync to CanvasCBL.
+
+The max age of a grade that will be returned by this endpoint is 48 hours.
+
 # Courses
 
 These APIs allow you to get courses and auxiliary information about them.
@@ -828,9 +909,9 @@ but we append the following query params:
 
 - `enrollment_state=active`
 - `include[]=observed_users` (you don't need the observees scope for this)
+- `include[]=course_image`
 
 This endpoint is [auto-paginated](#auto-pagination).
-
 
 ## Get Assignments
 
@@ -1020,6 +1101,179 @@ Gets Outcome Alignments for a course.
 This endpoint gets outcome alignments for a course on Canvas.
 
 Mostly a mirror of [this](https://canvas.instructure.com/doc/api/outcomes.html#method.outcomes_api.outcome_alignments) Canvas endpoint.
+
+## Get Enrollments
+
+> Enrollments for course ID 1
+
+```shell
+curl \
+  -X GET \
+  -H "Authorization: ilovecanvascbl" \
+  "<%= api_base_url %>/api/v1/courses/1/enrollments"
+```
+
+```javascript
+const courseId = 1;
+
+const coursesRequest = await axios({
+  method: "GET",
+  url: `<%= api_base_url %>/api/v1/courses/${courseId}/enrollments`,
+  headers: {
+    "Authorization": "Bearer ilovecanvascbl"
+  }
+});
+```
+
+> Enrollments for course ID 1, from a teacher's perspective
+
+```json
+{
+  "enrollments": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "course_id": 1,
+      "type": "StudentEnrollment",
+      "created_at": "2020-03-27T19:22:17Z",
+      "updated_at": "2020-04-06T03:32:25Z",
+      "associated_user_id": null,
+      "start_at": null,
+      "end_at": null,
+      "course_section_id": 1,
+      "root_account_id": 1,
+      "limit_privileges_to_course_section": false,
+      "enrollment_state": "active",
+      "role": "StudentEnrollment",
+      "role_id": 3,
+      "last_activity_at": "2020-04-20T18:35:13Z",
+      "last_attended_at": null,
+      "total_activity_time": 1,
+      // only present if the calling user is a teacher OR if this is the calling user's enrollment
+      // also not shown for CBL courses
+      "grades": {
+        "html_url": "https://canvas.instructure.com/courses/1/grades/1",
+        "current_grade": "A",
+        "current_score": 100.0,
+        "final_grade": "I",
+        "final_score": 1.95
+      },
+      "html_url": "https://canvas.instructure.com/courses/1/users/1",
+      "user": {
+        "id": 1,
+        "name": "Example Student",
+        "created_at": "2019-05-16T15:46:30-07:00",
+        "sortable_name": "Student, Example",
+        "short_name": "Example Student",
+        // only shown if the calling user is a teacher
+        "login_id": "student@example.com"
+      }
+    }
+    // ...
+  ]
+}
+```
+
+> Enrollments for course ID 1, from a non-teacher's perspective
+
+```json
+{
+  "enrollments": [
+    {
+      "course_id": 1,
+      "course_section_id": 1,
+      "created_at": "2020-03-27T19:23:18Z",
+      "enrollment_state": "active",
+      "grades": {
+        // grades are only visible for CBL courses
+        // visible because this is the calling user's enrollment
+        "current_grade": "A",
+        "current_score": 91.33,
+        "final_grade": "I",
+        "final_score": 47.24,
+        "html_url": "https://canvas.instructure.com/courses/1/grades/1"
+      },
+      "html_url": "https://dtechhs.instructure.com/courses/1/users/1",
+      "id": 1,
+      "last_activity_at": "2020-04-20T20:37:05Z",
+      "role": "StudentEnrollment",
+      "role_id": 3,
+      "root_account_id": 1,
+      "total_activity_time": 154137,
+      "type": "StudentEnrollment",
+      "updated_at": "2020-04-06T17:08:13Z",
+      "user": {
+        "created_at": "2019-05-16T15:46:30-07:00",
+        "id": 1,
+        "name": "Calling User",
+        "short_name": "Calling User",
+        "sortable_name": "User, Calling"
+      },
+      "user_id": 1
+    },
+    {
+      "course_id": 1,
+      "course_section_id": 1,
+      "created_at": "2020-03-27T19:23:17Z",
+      "enrollment_state": "active",
+      "grades": {
+        // grades are only visible for CBL courses
+        // no grades because this is NOT the calling user
+        "html_url": "https://canvas.instructure.com/courses/1/grades/2"
+      },
+      "html_url": "https://canvas.instructure.com/courses/1/users/2",
+      "id": 2,
+      "role": "StudentEnrollment",
+      "role_id": 3,
+      "root_account_id": 1,
+      "type": "StudentEnrollment",
+      "updated_at": "2020-04-06T17:08:13Z",
+      "user": {
+        "created_at": "2019-05-16T15:46:49-07:00",
+        "id": 460,
+        "name": "Another User",
+        "short_name": "Another User",
+        "sortable_name": "User, Another"
+      },
+      "user_id": 2
+    }
+  ]
+}
+```
+
+Get all enrollments for a course.
+
+### Endpoint
+
+`GET /api/v1/courses/:courseID/enrollments`
+
+### Scopes
+
+- `grades`
+- `enrollments`
+
+Both scopes are required for this call.
+
+### Query String
+
+| Param | Example Value | Description |
+| ----- | ------------- | ----------- |
+| `type[]` | `StudentEnrollment` | See Canvas API documentation. |
+| `state[]` | `active` | See Canvas API documentation. |
+
+### Description
+
+This endpoint lets you get all enrollments for a course.
+
+Mostly a mirror of [this](https://canvas.instructure.com/doc/api/enrollments.html#method.enrollments_api.index) Canvas endpoint,
+but we append the following query params:
+
+- `include[]=avatar_url`
+- `include[]=observed_users` (you don't need the observees scope for this)
+
+Note that 
+
+This endpoint is [auto-paginated](#auto-pagination).
 
 ## Hide a Course
 
