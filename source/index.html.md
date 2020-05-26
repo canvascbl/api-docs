@@ -138,6 +138,7 @@ The following OAuth2 scopes are available, although your credentials may not hav
 | gpa | The user's unweighted GPA. |
 | notifications | The ability to see and change all of the user's notification settings. |
 | enrollments | Enrollments in a user's courses. |
+| submissions | Submission metadata and submission summaries. This scope **does not** include access to a user's submission content. |
 
 ## Request
 
@@ -1271,9 +1272,120 @@ but we append the following query params:
 - `include[]=avatar_url`
 - `include[]=observed_users` (you don't need the observees scope for this)
 
-Note that 
-
 This endpoint is [auto-paginated](#auto-pagination).
+
+## Get Course Submission Summary
+
+> By-assignment submission summary for course `1`
+
+```shell
+curl \
+  -X PUT \
+  -H "Authorization: ilovecanvascbl" \
+  "<%= api_base_url %>/api/v1/courses/1/submission_summary/users"
+```
+
+```javascript
+const submissionSummaryRequest = await axios({
+  method: "PUT",
+  url: "<%= api_base_url %>/api/v1/courses/1/submission_summary/users",
+  headers: {
+    "Authorization": "Bearer ilovecanvascbl"
+  }
+});
+```
+
+> Per-user submission summary for course `1`
+
+```json
+{
+  "submission_summary": {
+    // Canvas user ID
+    "1": {
+      "summary": {
+        "graded": 10,
+        // submitted but not graded - does not include graded
+        "submitted": 5,
+        "unsubmitted": 10,
+        // only included with ?include[]=late_count
+        "late": {
+          // total number of late, submitted assignments
+          "total": 2,
+          // 8%
+          "percent": 8
+        }
+      }
+    }
+    // ...
+  }
+}
+```
+
+### Endpoint
+
+`GET /api/v1/courses/:courseID/submission_summary/users`
+
+### Scopes
+
+- `submissions`
+
+### Query String
+
+| Param | Example Value | Description |
+| ----- | ------------- | ----------- |
+| `user_ids[]` | `123` | The users that you'd like the summary for. See the Permissions section below for more info. |
+| `use_cache` | `true` or `false` | Whether you would like to use the [CanvasCBL cache](#cached-data) for this request. This param is ignored and the cache is always used when teachers get data for an entire class. Defaults to true for teachers and false for everyone else. |
+| `include[]` | `late_count` | Adds the number and percentage of late assignments to the summary. |
+
+### Description
+
+Course submission summaries provide users with an overview of student
+submissions in their course.
+
+It provides counts of:
+
+- Graded assignments
+- Submitted, but ungraded assignments
+- Unsubmitted assignments
+
+By default, data from this endpoint is cached for teachers and live for
+students and observers.
+
+This endpoint may not work for all users. We're using data from Canvas that
+needs scopes we added after some users signed up. In this case, we'll include
+the [`redirect_to_oauth` error action](#grades-errors).
+
+### Permissions
+
+Every user who is enrolled in this course may use this endpoint. However,
+we will limit the scope of data returned.
+
+- Students may get data for **themselves only**.
+- Observers may get data for all of their enrolled observees.
+- Teachers may get data for all users in the specified course.
+
+You may figure out the user's enrollment in the course by either
+[getting enrollments](#get-enrollments) or [getting courses](#get-courses).
+
+If a user does not have access to one or more requested users' submissions,
+the following error will be returned: `you do not have access to one or more
+of the requested user's submissions`.
+
+#### By-Enrollment Permissions
+
+If the user does not have a valid enrollment in the course, you will get the
+following error: `unable to find a valid enrollment for you in this course`.
+Note that this error may show up when using the cache if the user's
+enrollments have not synced to CanvasCBL.
+
+This endpoint supports the following enrollment types:
+
+- `TeacherEnrollment`
+- `StudentEnrollment`
+- `ObserverEnrollment`
+
+If the user does not have one of those enrollment types, the following error
+will be returned: `your enrollment type in this course does not support submission summaries at this time`.
 
 ## Hide a Course
 

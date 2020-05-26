@@ -92,13 +92,14 @@ Currently, all possible grades errors are to the right.
 
 ```go
 const (
-	gradesErrorNoTokens              = "no stored tokens for this user"
-	gradesErrorRevokedToken          = "the token/refresh token has been revoked or no longer works"
-	gradesErrorRefreshedTokenError   = "after refreshing the token, it is invalid"
-	gradesErrorUnknownCanvasError    = "there was an unknown error from canvas"
-	gradesErrorInvalidInclude        = "invalid include"
-	gradesErrorUnauthorizedScope     = "your oauth2 grant doesn't have one or more requested scopes"
-	gradesErrorInvalidAccessToken    = "invalid access token"
+  gradesErrorNoTokens              = "no stored tokens for this user"
+  gradesErrorRevokedToken          = "the token/refresh token has been revoked or no longer works"
+  gradesErrorRefreshedTokenError   = "after refreshing the token, it is invalid"
+  gradesErrorUnknownCanvasError    = "there was an unknown error from canvas"
+  gradesErrorInvalidInclude        = "invalid include"
+  gradesErrorUnauthorizedScope     = "your oauth2 grant doesn't have one or more requested scopes"
+  gradesErrorInvalidAccessToken    = "invalid access token"
+  gradesErrorMissingCanvasScope    = "we need a new canvas token from you"
 )
 ```
 
